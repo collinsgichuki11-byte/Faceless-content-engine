@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Faceless Content Engine</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:#07070d;}
+    ::-webkit-scrollbar{width:4px;}
+    ::-webkit-scrollbar-thumb{background:#ff4d00;border-radius:2px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes glowPulse{0%,100%{opacity:0.3;transform:scale(1);}50%{opacity:0.6;transform:scale(1.1);}}
+    input[type=range]{accent-color:#ff4d00;width:100%;}
+    select option{background:#1a1a1a;color:#e8e4dc;}
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useCallback } = React;
+
+    const NICHES = ["Finance & Wealth","Motivation & Mindset","True Crime","Health & Longevity","AI & Technology","History Mysteries","Luxury Lifestyle","Self Improvement","Crypto & Web3","Psychology & Mind"];
+    const TONES = ["Dramatic","Educational","Inspirational","Shocking","Calm & Trustworthy"];
+    const VIDEO_STYLES = [
+      {id:"cinematic",label:"🎬 Dark Cinematic",bg:"#07070d",text:"#ffffff",accent:"#ff4d00"},
+      {id:"minimal",label:"⬜ Clean Minimal",bg:"#f5f5f0",text:"#111111",accent:"#0066ff"},
+      {id:"neon",label:"💜 Neon Glow",bg:"#0a0015",text:"#e0aaff",accent:"#c77dff"},
+      {id:"gold",label:"✨ Gold Luxury",bg:"#0d0a00",text:"#ffd700",accent:"#ffaa00"},
+    ];
+
+    function PaymentGate({onAccess}) {
+      const [sms,setSms]=useState("");
+      const [error,setError]=useState("");
+      const [checking,setChecking]=useState(false);
+      const [step,setStep]=useState(1);
+      const verify=()=>{
+        setChecking(true);setError("");
+        setTimeout(()=>{
+          const msg=sms.toLowerCase();
+          const hasAmount=msg.includes("50");
+          const hasNumber=msg.includes("733473677")||msg.includes("0733473677")||msg.includes("+254733473677")||msg.includes("254733473677");
+          const hasConfirm=msg.includes("confirmed")||msg.includes("sent")||msg.includes("received")||msg.includes("umefaulu")||msg.includes("successful");
+          if(hasAmount&&hasNumber&&hasConfirm){onAccess();}
+          else{setError("❌ Could not verify. Paste the exact Airtel Money SMS mentioning KES 50 and number 0733473677.");}
+          setChecking(false);
+        },1800);
+      };
+      return (
+        <div style={{minHeight:"100vh",background:"#07070d",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'DM Sans',sans-serif",color:"#e8e4dc",position:"relative",overflow:"hidden",padding:20}}>
+          <div style={{position:"absolute",width:500,height:500,background:"radial-gradient(circle,rgba(255,77,0,0.15) 0%,transparent 70%)",borderRadius:"50%",top:"50%",left:"50%",transform:"translate(-50%,-50%)",animation:"glowPulse 4s ease-in-out infinite",pointerEvents:"none"}}/>
+          <div style={{position:"relative",zIndex:1,background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:16,padding:"40px 32px",maxWidth:460,width:"100%"}}>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:28,justifyContent:"center"}}>
+              <span style={{fontSize:20}}>⚡</span>
+              <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,letterSpacing:3,color:"#ff4d00"}}>CONTENT ENGINE</span>
+            </div>
+            {step===1&&(
+              <>
+                <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:38,letterSpacing:1,marginBottom:8,textAlign:"center"}}>Unlock Full Access</h2>
+                <p style={{color:"#888",fontSize:14,textAlign:"center",marginBottom:28}}>One-time payment of <span style={{color:"#ff4d00",fontWeight:600}}>KES 50</span> via Airtel Money</p>
+                <div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:10,padding:"20px 18px",display:"flex",flexDirection:"column",gap:18,marginBottom:24}}>
+                  {[["1","Open Airtel Money","Go to Send Money on your Airtel Money menu"],["2","Send KES 50 to:",""],["3","You'll receive an SMS","It will say: Confirmed. You have sent KES 50.00 to 0733473677..."]].map(([n,t,d])=>(
+                    <div key={n} style={{display:"flex",alignItems:"flex-start",gap:14}}>
+                      <span style={{background:"#ff4d00",color:"#fff",width:26,height:26,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:700,flexShrink:0,marginTop:2}}>{n}</span>
+                      <div>
+                        <div style={{fontSize:13,fontWeight:500,marginBottom:3}}>{t}</div>
+                        {n==="2"&&<div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:22,color:"#ff4d00",letterSpacing:2,fontWeight:600,margin:"4px 0"}}>0733 473 677</div>}
+                        {d&&<div style={{fontSize:12,color:"#666"}}>{d}</div>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <button onClick={()=>setStep(2)} style={{width:"100%",background:"#ff4d00",color:"#fff",border:"none",borderRadius:8,padding:15,fontSize:13,fontFamily:"'JetBrains Mono',monospace",letterSpacing:2,cursor:"pointer",fontWeight:600,marginBottom:12}}>I've Paid — Verify Now →</button>
+                <p style={{fontSize:11,color:"#555",textAlign:"center"}}>💡 Instant access after verification. No account needed.</p>
+              </>
+            )}
+            {step===2&&(
+              <>
+                <h2 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:38,letterSpacing:1,marginBottom:8,textAlign:"center"}}>Paste Your SMS</h2>
+                <p style={{color:"#888",fontSize:14,textAlign:"center",marginBottom:20}}>Copy the Airtel Money confirmation SMS and paste below</p>
+                <textarea value={sms} onChange={e=>{setSms(e.target.value);setError("");}} placeholder={"Paste your Airtel Money SMS here...\n\nExample:\nConfirmed. You have sent KES 50.00 to 0733473677 on 30/04/2026..."} style={{width:"100%",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:8,color:"#e8e4dc",fontSize:13,padding:"12px 14px",outline:"none",fontFamily:"'DM Sans',sans-serif",resize:"vertical",marginBottom:14,lineHeight:1.6}} rows={5}/>
+                {error&&<div style={{background:"rgba(255,0,0,0.08)",border:"1px solid rgba(255,0,0,0.2)",color:"#ff6b6b",borderRadius:8,padding:"10px 14px",fontSize:12,marginBottom:14}}>{error}</div>}
+                <button onClick={verify} disabled={!sms.trim()||checking} style={{width:"100%",background:(!sms.trim()||checking)?"#2a2a2a":"#ff4d00",color:(!sms.trim()||checking)?"#555":"#fff",border:"none",borderRadius:8,padding:15,fontSize:13,fontFamily:"'JetBrains Mono',monospace",letterSpacing:2,cursor:(!sms.trim()||checking)?"not-allowed":"pointer",fontWeight:600,marginBottom:12}}>
+                  {checking?<span style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8}}><span style={{display:"inline-block",width:14,height:14,border:"2px solid rgba(255,255,255,0.2)",borderTopColor:"#fff",borderRadius:"50%",animation:"spin 0.7s linear infinite"}}/>VERIFYING...</span>:"✅ VERIFY & UNLOCK"}
+                </button>
+                <button onClick={()=>{setStep(1);setError("");}} style={{background:"transparent",border:"none",color:"#555",fontSize:12,cursor:"pointer",width:"100%",textAlign:"center",fontFamily:"'DM Sans',sans-serif"}}>← Back to payment steps</button>
+              </>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    function Blk({icon,label,content,onCopy,copied,tall,accent,half,gold}){
+      return(
+        <div style={{background:accent?"rgba(255,77,0,0.06)":gold?"rgba(255,200,0,0.05)":"rgba(255,255,255,0.03)",border:accent?"1px solid rgba(255,77,0,0.22)":gold?"1px solid rgba(255,200,0,0.18)":"1px solid rgba(255,255,255,0.07)",borderRadius:10,padding:"16px 18px",flex:half?"1":undefined,minWidth:half?0:undefined,animation:"fadeUp 0.35s ease forwards"}}>
+          <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:9}}>
+            <span style={{fontSize:13}}>{icon}</span>
+            <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:9,letterSpacing:2.5,color:"#555",flex:1}}>{label}</span>
+            <button onClick={onCopy} style={{background:"transparent",border:copied?"1px solid #4CAF50":"1px solid rgba(255,255,255,0.09)",color:copied?"#4CAF50":"#555",fontSize:9,padding:"3px 8px",borderRadius:4,cursor:"pointer",fontFamily:"'JetBrains Mono',monospace",letterSpacing:1}}>{copied?"✓ COPIED":"COPY"}</button>
+          </div>
+          <p style={{fontSize:13,lineHeight:1.7,color:"#bbb",fontWeight:300,maxHeight:tall?200:undefined,overflowY:tall?"auto":undefined}}>{content}</p>
+        </div>
+      );
+    }
+
+    function App(){
+      const [unlocked,setUnlocked]=useState(false);
+      const [niche,setNiche]=useState("");
+      const [customNiche,setCustomNiche]=useState("");
+      const [tone,setTone]=useState("Dramatic");
+      const [topic,setTopic]=useState("");
+      const [loading,setLoading]=useState(false);
+      const [result,setResult]=useState(null);
+      const [copied,setCopied]=useState(null);
+      const [tab,setTab]=useState("content");
+      const [voices,setVoices]=useState([]);
+      const [selectedVoice,setSelectedVoice]=useState(null);
+      const [speaking,setSpeaking]=useState(false);
+      const [speechRate,setSpeechRate]=useState(0.95);
+      const [speechPitch,setSpeechPitch]=useState(1);
+      const [ttsProgress,setTtsProgress]=useState(0);
+      const [videoStyle,setVideoStyle]=useState(VIDEO_STYLES[0]);
+      const [recording,setRecording]=useState(false);
+      const [videoReady,setVideoReady]=useState(false);
+      const [videoURL,setVideoURL]=useState(null);
+      const [videoProgress,setVideoProgress]=useState(0);
+      const canvasRef=useRef(null);
+      const chunksRef=useRef([]);
+      const selectedNiche=niche==="custom"?customNiche:niche;
+
+      useEffect(()=>{
+        const load=()=>{const v=window.speechSynthesis.getVoices();if(v.length){setVoices(v);setSelectedVoice(v[0]);}};
+        load();window.speechSynthesis.onvoiceschanged=load;
+        return()=>window.speechSynthesis.cancel();
+      },[]);
+
+      const generate=async()=>{
+        if(!selectedNiche||!topic)return;
+        setLoading(true);setResult(null);setVideoReady(false);setVideoURL(null);
+        const prompt=`You are a professional faceless YouTube content strategist.\nNiche: ${selectedNiche}\nTopic: ${topic}\nTone: ${tone}\nRespond ONLY with valid JSON, no markdown:\n{"title":"powerful video title under 70 chars","hook":"first 15 seconds script","script":"full narration 400-500 words voice-over only no stage directions","thumbnail":"thumbnail concept main text 5 words max background description colors","description":"youtube description 150 words","tags":["tag1","tag2","tag3","tag4","tag5","tag6","tag7","tag8"],"schedule":"best day time and frequency","monetization":"one specific monetization tip"}`;
+        try{
+          const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompt}]})});
+          const data=await res.json();
+          const text=data.content?.map(b=>b.text||"").join("")||"";
+          setResult(JSON.parse(text.replace(/```json|```/g,"").trim()));
+        }catch{setResult({error:"Generation failed. Please try again."});}
+        setLoading(false);
+      };
+
+      const copy=(text,key)=>{navigator.clipboard.writeText(text);setCopied(key);setTimeout(()=>setCopied(null),2000);};
+
+      const speakScript=useCallback(()=>{
+        if(!result?.script)return;
+        window.speechSynthesis.cancel();
+        const utt=new SpeechSynthesisUtterance(result.hook+". "+result.script);
+        if(selectedVoice)utt.voice=selectedVoice;
+        utt.rate=speechRate;utt.pitch=speechPitch;setTtsProgress(0);
+        const words=(result.hook+" "+result.script).split(" ").length;let wc=0;
+        utt.onboundary=e=>{if(e.name==="word"){wc++;setTtsProgress(Math.min(100,Math.round((wc/words)*100)));}}; 
+        utt.onend=()=>{setSpeaking(false);setTtsProgress(100);};
+        utt.onerror=()=>setSpeaking(false);
+        window.speechSynthesis.speak(utt);setSpeaking(true);
+      },[result,selectedVoice,speechRate,speechPitch]);
+
+      const stopSpeech=()=>{window.speechSynthesis.cancel();setSpeaking(false);setTtsProgress(0);};
+
+      const generateVideo=useCallback(async()=>{
+        if(!result||!canvasRef.current)return;
+        setRecording(true);setVideoReady(false);setVideoURL(null);setVideoProgress(0);chunksRef.current=[];
+        const canvas=canvasRef.current;canvas.width=1280;canvas.height=720;
+        const ctx=canvas.getContext("2d");const vs=videoStyle;
+        const stream=canvas.captureStream(30);
+        const recorder=new MediaRecorder(stream,{mimeType:"video/webm;codecs=vp9"});
+        recorder.ondataavailable=e=>{if(e.data.size>0)chunksRef.current.push(e.data);};
+        recorder.onstop=()=>{const blob=new Blob(chunksRef.current,{type:"video/webm"});setVideoURL(URL.createObjectURL(blob));setVideoReady(true);setRecording(false);};
+        recorder.start();
+        const segs=[{type:"TITLE",text:result.title},{type:"HOOK",text:result.hook},...result.script.split(". ").filter(s=>s.trim().length>10).map(s=>({type:"SCRIPT",text:s.trim()+"."}))];
+        const total=segs.length*90;let fc=0;
+        const draw=(seg,gp)=>{
+          ctx.fillStyle=vs.bg;ctx.fillRect(0,0,1280,720);
+          ctx.strokeStyle=vs.text+"08";ctx.lineWidth=1;
+          for(let x=0;x<1280;x+=80){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,720);ctx.stroke();}
+          for(let y=0;y<720;y+=80){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(1280,y);ctx.stroke();}
+          ctx.fillStyle=vs.accent;ctx.fillRect(0,0,1280*gp,6);
+          ctx.fillStyle=vs.accent+"22";ctx.beginPath();ctx.roundRect(60,40,220,36,6);ctx.fill();
+          ctx.fillStyle=vs.accent;ctx.font="bold 13px Arial";ctx.textAlign="left";ctx.fillText(selectedNiche.toUpperCase(),75,64);
+          const isT=seg.type==="TITLE";const fs=isT?62:34;
+          ctx.font=`${isT?"900":"400"} ${fs}px Georgia,serif`;ctx.textAlign="center";
+          const ws=seg.text.split(" ");const ls=[];let cur="";
+          for(const w of ws){const t=cur?cur+" "+w:w;if(ctx.measureText(t).width>1100){ls.push(cur);cur=w;}else cur=t;}
+          if(cur)ls.push(cur);
+          const lh=fs*1.35;const th2=ls.length*lh;const sy=(720-th2)/2;
+          ls.forEach((line,i)=>{ctx.fillStyle="rgba(0,0,0,0.5)";ctx.fillText(line,642,sy+i*lh+2);ctx.fillStyle=vs.text;ctx.fillText(line,640,sy+i*lh);});
+          ctx.fillStyle=vs.text+"15";ctx.fillRect(60,700,1160,3);ctx.fillStyle=vs.accent;ctx.fillRect(60,700,1160*gp,3);
+        };
+        for(let i=0;i<segs.length;i++){
+          for(let f=0;f<90;f++){draw(segs[i],(i*90+f)/total);fc++;setVideoProgress(Math.round((fc/total)*100));await new Promise(r=>setTimeout(r,33));}
+        }
+        recorder.stop();
+      },[result,videoStyle,selectedNiche]);
+
+      if(!unlocked)return <PaymentGate onAccess={()=>setUnlocked(true)}/>;
+
+      const card={background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:12,padding:"28px 24px",marginBottom:20};
+
+      return(
+        <div style={{minHeight:"100vh",background:"#07070d",fontFamily:"'DM Sans',sans-serif",color:"#e8e4dc"}}>
+          <canvas ref={canvasRef} style={{display:"none"}}/>
+          <div style={{maxWidth:780,margin:"0 auto",padding:"44px 20px 80px"}}>
+            <div style={{textAlign:"center",marginBottom:36}}>
+              <div style={{display:"inline-block",border:"1px solid #ff4d00",color:"#ff4d00",fontFamily:"'JetBrains Mono',monospace",fontSize:10,letterSpacing:3,padding:"4px 14px",borderRadius:2,marginBottom:18}}>⚡ STUDIO — UNLOCKED</div>
+              <h1 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:"clamp(44px,9vw,84px)",lineHeight:0.93,letterSpacing:2,marginBottom:12}}><span style={{color:"#ff4d00"}}>FACELESS</span><br/>CONTENT ENGINE</h1>
+              <p style={{color:"#666",fontSize:13}}>Generate • Narrate • Export — No face. No limits.</p>
+            </div>
+
+            <div style={card}>
+              <div style={{marginBottom:22}}>
+                <label style={{display:"block",fontFamily:"'JetBrains Mono',monospace",fontSize:9,letterSpacing:3,color:"#ff4d00",marginBottom:10}}>SELECT NICHE</label>
+                <div style={{display:"flex",flexWrap:"wrap",gap:7}}>
+                  {NICHES.map(n=><button key={n} onClick={()=>setNiche(n)} style={{background:niche===n?"rgba(255,77,0,0.15)":"transparent",border:niche===n?"1px solid #ff4d00":"1px solid rgba(255,255,255,0.1)",color:niche===n?"#ff4d00":"#888",padding:"6px 13px",borderRadius:6,fontSize:12,cursor:"pointer",fontFamily:"'DM Sans',sans-serif"}}>{n}</button>)}
+                  <button onClick={()=>setNiche("custom")} style={{background:niche==="custom"?"rgba(255,77,0,0.15)":"transparent",border:niche==="custom"?"1px solid #ff4d00":"1px solid rgba(255,255,255,0.1)",color:niche==="custom"?"#ff4d00":"#888",padding:"6px 13px",borderRadius:6,fontSize:12,cursor:"pointer",fontFamily:"'DM Sans',sans-serif"}}>✏️ Custom</button>
+                </div>
+                {niche==="custom"&&<input value={customNiche} onChange={e=>setCustomNiche(e.target.value)} placeholder="Your niche..." style={{width:"100%",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.09)",borderRadius:8,color:"#e8e4dc",fontSize:14,padding:"12px 15px",outline:"none",fontFamily:"'DM Sans',sans-serif",marginTop:8}}/>}
+              </div>
+              <div style={{marginBottom:22}}>
+                <label style={{display:"block",fontFamily:"'JetBrains Mono',monospace",fontSize:9,letterSpacing:3,color:"#ff4d00",marginBottom:10}}>TONE</label>
+                <div style={{display:"flex",flexWrap:"wrap",gap:7}}>
+                  {TONES.map(t=><button key={t} onClick={()=>setTone(t)} style={{background:tone===t?"rgba(255,77,0,0.1)":"transparent",border:tone===t?"1px solid #ff4d00":"1px solid rgba(255,255,255,0.09)",color:tone===t?"#ff7a40":"#777",padding:"6px 15px",borderRadius:20,fontSize:12,cursor:"pointer",fontFamily:"'DM Sans',sans-serif"}}>{t}</button>)}
+                </div>
+              </div>
+              <div style={{marginBottom:22}}>
+                <label style={{display:"block",fontFamily:"'JetBrains Mono',monospace",fontSize:9,letterSpacing:3,color:"#ff4d00",marginBottom:10}}>TOPIC / IDEA</label>
+                <input value={topic} onChange={e=>setTopic(e.target.value)} onKeyDown={e=>e.key==="Enter"&&generate()} placeholder="e.g. 'The dark truth about passive income'" style={{width:"100%",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.09)",borderRadius:8,color:"#e8e4dc",fontSize:14,padding:"12px 15px",outline:"none",fontFamily:"'DM Sans',sans-serif"}}/>
+              </div>
+              <button onClick={generate} disabled={loading||!selectedNiche||!topic} style={{width:"100%",background:(loading||!selectedNiche||!topic)?"#1e1e1e":"#ff4d00",color:(loading||!selectedNiche||!topic)?"#444":"#fff",border:"none",borderRadius:8,padding:15,fontSize:12,fontFamily:"'JetBrains Mono',monospace",letterSpacing:2,cursor:(loading||!selectedNiche||!topic)?"not-allowed":"pointer",fontWeight:600}}>
+                {loading?<span style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8}}><span style={{display:"inline-block",width:13,height:13,border:"2px solid rgba(255,255,255,0.15)",borderTopColor:"#fff",borderRadius:"50%",animation:"spin 0.7s linear infinite"}}/>GENERATING...</span>:"⚡ GENERATE CONTENT PACKAGE"}
+              </button>
+            </div>
+
+            {result&&!result.error&&(
+              <>
+                <div style={{display:"flex",gap:4,marginBottom:16}}>
+                  {[["content","📄 Content"],["audio","🔊 Audio"],["video","🎬 Video"]].map(([id,label])=>(
+                    <button key={id} onClick={()=>setTab(id)} style={{flex:1,background:tab===id?"rgba(255,77,0,0.1)":"rgba(255,255,255,0.03)",border:tab===id?"1px solid #ff4d00":"1px solid rgba(255,255,255,0.07)",color:tab===id?"#ff4d00":"#666",borderRadius:8,padding:11,fontSize:12,cursor:"pointer",fontFamily:"'DM Sans',sans-serif"}}>{label}</button>
+                  ))}
+                </div>
+
+                {tab==="content"&&(
+                  <div style={{display:"flex",flexDirection:"column",gap:10}}>
+                    <Blk icon="🎬" label="VIDEO TITLE" content={result.title} accent onCopy={()=>copy(result.title,"title")} copied={copied==="title"}/>
+                    <Blk icon="🔥" label="HOOK (First 15 sec)" content={result.hook} onCopy={()=>copy(result.hook,"hook")} copied={copied==="hook"}/>
+                    <Blk icon="📜" label="FULL SCRIPT" content={result.script} tall onCopy={()=>copy(result.script,"script")} copied={copied==="script"}/>
+                    <Blk icon="🖼️" label="THUMBNAIL CONCEPT" content={result.thumbnail} onCopy={()=>copy(result.thumbnail,"thumb")} copied={copied==="thumb"}/>
+                    <Blk icon="📝" label="DESCRIPTION" content={result.description} tall onCopy={()=>copy(result.description,"desc")} copied={copied==="desc"}/>
+                    <div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:10,padding:"16px 18px"}}>
+                      <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:9}}>
+                        <span style={{fontSize:13}}>🏷️</span>
+                        <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:9,letterSpacing:2.5,color:"#555",flex:1}}>TAGS</span>
+                        <button onClick={()=>copy(result.tags.join(", "),"tags")} style={{background:"transparent",border:copied==="tags"?"1px solid #4CAF50":"1px solid rgba(255,255,255,0.09)",color:copied==="tags"?"#4CAF50":"#555",fontSize:9,padding:"3px 8px",borderRadius:4,cursor:"pointer",fontFamily:"'JetBrains Mono',monospace"}}>{copied==="tags"?"✓ COPIED":"COPY"}</button>
+                      </div>
+                      <div style={{display:"flex",flexWrap:"wrap",gap:6}}>{result.tags?.map(t=><span key={t} style={{background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.07)",color:"#777",fontSize:11,padding:"3px 10px",borderRadius:20,fontFamily:"'JetBrains Mono',monospace"}}>{t}</span>)}</div>
+                    </div>
+                    <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+                      <Blk icon="📅" label="POST SCHEDULE" content={result.schedule} half onCopy={()=>copy(result.schedule,"sched")} copied={copied==="sched"}/>
+                      <Blk icon="💰" label="MONETIZATION TIP" content={result.monetization} half gold onCopy={()=>copy(result.monetization,"money")} copied={copied==="money"}/>
+                    </div>
+                  </div>
+                )}
+
+                {tab==="audio"&&(
+                  <div style={card}>
+                    <h3 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:24,letterSpacing:1,marginBottom:6}}>🔊 Text-to-Speech Narrator</h3>
+                    <p style={{color:"#666",fontSize:12,marginBottom:22,lineHeight:1.6}}>Hear your full script read aloud. Record with OBS or Audacity.</p>
+                    <div style={{marginBottom:18}}>
+                      <label style={{display:"block",fontFamily:"'JetBrains Mono',monospace",fontSize:9,letterSpacing:3,color:"#ff4d00",marginBottom:10}}>SELECT VOICE</label>
+                      <select value={selectedVoice?.name||""} onChange={e=>setSelectedVoice(voices.find(v=>v.name===e.target.value))} style={{width:"100%",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.09)",borderRadius:8,color:"#e8e4dc",fontSize:13,padding:"11px 14px",outline:"none",fontFamily:"'DM Sans',sans-serif"}}>
+                        {voices.map(v=><option key={v.name} value={v.name}>{v.name} ({v.lang})</option>)}
+                      </select>
+                    </div>
+                    <div style={{display:"flex",gap:16,marginBottom:20}}>
+                      <div style={{flex:1}}><label style={{display:"block",fontFamily:"'JetBrains Mono',monospace",fontSize:9,letterSpacing:3,color:"#ff4d00",marginBottom:8}}>SPEED: {speechRate}x</label><input type="range" min="0.5" max="1.8" step="0.05" value={speechRate} onChange={e=>setSpeechRate(parseFloat(e.target.value))}/></div>
+                      <div style={{flex:1}}><label style={{display:"block",fontFamily:"'JetBrains Mono',monospace",fontSize:9,letterSpacing:3,color:"#ff4d00",marginBottom:8}}>PITCH: {speechPitch}</label><input type="range" min="0.5" max="2" step="0.1" value={speechPitch} onChange={e=>setSpeechPitch(parseFloat(e.target.value))}/></div>
+                    </div>
+                    {ttsProgress>0&&ttsProgress<100&&<div style={{background:"rgba(255,255,255,0.04)",borderRadius:6,height:28,position:"relative",overflow:"hidden",marginBottom:16,display:"flex",alignItems:"center"}}><div style={{position:"absolute",left:0,top:0,bottom:0,borderRadius:6,background:"#ff4d00",width:`${ttsProgress}%`,transition:"width 0.2s"}}/><span style={{position:"relative",zIndex:1,fontFamily:"'JetBrains Mono',monospace",fontSize:10,color:"#fff",paddingLeft:12}}>{ttsProgress}%</span></div>}
+                    {!speaking?<button onClick={speakScript} style={{width:"100%",background:"#ff4d00",color:"#fff",border:"none",borderRadius:8,padding:14,fontSize:12,fontFamily:"'JetBrains Mono',monospace",letterSpacing:2,cursor:"pointer",fontWeight:600}}>▶ PLAY SCRIPT</button>:<button onClick={stopSpeech} style={{width:"100%",background:"#333",color:"#fff",border:"none",borderRadius:8,padding:14,fontSize:12,fontFamily:"'JetBrains Mono',monospace",letterSpacing:2,cursor:"pointer",fontWeight:600}}>⏹ STOP</button>}
+                    <div style={{background:"rgba(255,200,0,0.05)",border:"1px solid rgba(255,200,0,0.15)",borderRadius:8,padding:"12px 16px",fontSize:12,color:"#aaa",lineHeight:1.6,marginTop:16}}>💡 <strong>Tip:</strong> Use <strong>OBS Studio</strong> (free) to record your screen + audio while the script plays.</div>
+                  </div>
+                )}
+
+                {tab==="video"&&(
+                  <div style={card}>
+                    <h3 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:24,letterSpacing:1,marginBottom:6}}>🎬 Video Generator</h3>
+                    <p style={{color:"#666",fontSize:12,marginBottom:22,lineHeight:1.6}}>Renders a real downloadable .webm video. Upload directly to YouTube.</p>
+                    <div style={{marginBottom:20}}>
+                      <label style={{display:"block",fontFamily:"'JetBrains Mono',monospace",fontSize:9,letterSpacing:3,color:"#ff4d00",marginBottom:10}}>VIDEO STYLE</label>
+                      <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
+                        {VIDEO_STYLES.map(vs=><button key={vs.id} onClick={()=>setVideoStyle(vs)} style={{padding:"10px 16px",borderRadius:8,fontSize:12,cursor:"pointer",fontFamily:"'DM Sans',sans-serif",fontWeight:500,background:vs.bg,color:vs.text,border:videoStyle.id===vs.id?`2px solid ${vs.accent}`:"1px solid rgba(255,255,255,0.08)"}}>{vs.label}</button>)}
+                      </div>
+                    </div>
+                    {recording&&<div style={{background:"rgba(255,255,255,0.04)",borderRadius:6,height:28,position:"relative",overflow:"hidden",marginBottom:16,display:"flex",alignItems:"center"}}><div style={{position:"absolute",left:0,top:0,bottom:0,borderRadius:6,background:"#ff4d00",width:`${videoProgress}%`,transition:"width 0.2s"}}/><span style={{position:"relative",zIndex:1,fontFamily:"'JetBrains Mono',monospace",fontSize:10,color:"#fff",paddingLeft:12}}>Rendering... {videoProgress}%</span></div>}
+                    {!recording&&!videoReady&&<button onClick={generateVideo} style={{width:"100%",background:"#ff4d00",color:"#fff",border:"none",borderRadius:8,padding:14,fontSize:12,fontFamily:"'JetBrains Mono',monospace",letterSpacing:2,cursor:"pointer",fontWeight:600,marginBottom:16}}>🎬 GENERATE VIDEO</button>}
+                    {recording&&<button disabled style={{width:"100%",background:"#1a1a1a",color:"#555",border:"none",borderRadius:8,padding:14,fontSize:12,fontFamily:"'JetBrains Mono',monospace",letterSpacing:2,cursor:"not-allowed",fontWeight:600,marginBottom:16}}><span style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8}}><span style={{display:"inline-block",width:13,height:13,border:"2px solid rgba(255,255,255,0.15)",borderTopColor:"#fff",borderRadius:"50%",animation:"spin 0.7s linear infinite"}}/>RENDERING...</span></button>}
+                    {videoReady&&videoURL&&(
+                      <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:16}}>
+                        <video src={videoURL} controls style={{width:"100%",borderRadius:8,border:"1px solid rgba(255,255,255,0.08)"}}/>
+                        <a href={videoURL} download="faceless-video.webm" style={{display:"block",textAlign:"center",background:"#4CAF50",color:"#fff",borderRadius:8,padding:13,fontSize:12,fontFamily:"'JetBrains Mono',monospace",letterSpacing:2,textDecoration:"none",fontWeight:600}}>⬇ DOWNLOAD VIDEO (.webm)</a>
+                        <button onClick={()=>{setVideoReady(false);setVideoURL(null);setVideoProgress(0);}} style={{background:"transparent",border:"1px solid rgba(255,255,255,0.1)",color:"#666",borderRadius:8,padding:10,fontSize:12,cursor:"pointer",fontFamily:"'DM Sans',sans-serif"}}>↺ Try a different style</button>
+                      </div>
+                    )}
+                    <div style={{background:"rgba(255,200,0,0.05)",border:"1px solid rgba(255,200,0,0.15)",borderRadius:8,padding:"12px 16px",fontSize:12,color:"#aaa",lineHeight:1.6}}>💡 <strong>Pro move:</strong> Play the Audio tab while your video renders for a complete faceless video.</div>
+                  </div>
+                )}
+              </>
+            )}
+            {result?.error&&<div style={{background:"rgba(255,0,0,0.07)",border:"1px solid rgba(255,0,0,0.18)",color:"#ff6b6b",borderRadius:8,padding:16,fontSize:13,textAlign:"center"}}>{result.error}</div>}
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>
